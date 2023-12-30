@@ -1,0 +1,39 @@
+.App {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    background-color: #5a0000;
+}
+
+.color_red {
+    color: rgb(243, 59, 59);
+}
+
+.color_yellow {
+    background: linear-gradient(to right, var(--color-yellow), var(--color-yellow-1) 100%);
+    background-clip: text;
+    color: transparent;
+
+}
+
+.w-100{
+    width: 100%;
+}
+
+.block{
+    display: block;
+}
+
+.background-yellow-linear{
+    background: linear-gradient(to right, var(--color-yellow), var(--color-yellow-1) 100%);
+}
+
+.background-red{
+    background-color: #ba0a0a;
+}
+
+.background-white{
+    background-color: #ffff;
+}

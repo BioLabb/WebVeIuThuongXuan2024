@@ -1,0 +1,29 @@
+.container_input{
+    display: flex;
+    flex-direction: column;
+}
+
+.container_input > *{
+    display: block;
+}
+
+.input_wrap{
+    min-width:300px ;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    border: 1px solid #948e8e;
+    border-radius: var(--border-radius);
+    background-color: #ffff;
+}
+
+.input_wrap >input{
+    line-height: 20px;
+    width: 80%;
+    padding: 1px 6px;
+    border: none;
+    outline: none;
+    background: none;
+}
+
