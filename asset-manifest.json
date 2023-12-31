@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/BioLabb/WebVeIuThuongXuan2024/static/css/main.2514014a.css",
+    "main.js": "/BioLabb/WebVeIuThuongXuan2024/static/js/main.9997608c.js",
+    "static/js/787.141fcf50.chunk.js": "/BioLabb/WebVeIuThuongXuan2024/static/js/787.141fcf50.chunk.js",
+    "index.html": "/BioLabb/WebVeIuThuongXuan2024/index.html",
+    "main.2514014a.css.map": "/BioLabb/WebVeIuThuongXuan2024/static/css/main.2514014a.css.map",
+    "main.9997608c.js.map": "/BioLabb/WebVeIuThuongXuan2024/static/js/main.9997608c.js.map",
+    "787.141fcf50.chunk.js.map": "/BioLabb/WebVeIuThuongXuan2024/static/js/787.141fcf50.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.2514014a.css",
+    "static/js/main.9997608c.js"
+  ]
+}
