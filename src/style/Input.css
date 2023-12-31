@@ -1,16 +1,21 @@
 .container_input{
     display: flex;
     flex-direction: column;
+    margin-top: 10px;
+    margin-bottom: 10px;
+
 }
 
 .container_input > *{
     display: block;
 }
+.container_input > label{
+    margin-bottom: 4px;
+}
+
 
 .input_wrap{
     min-width:300px ;
-    margin-top: 10px;
-    margin-bottom: 10px;
     padding-top: 6px;
     padding-bottom: 6px;
     border: 1px solid #948e8e;
@@ -19,6 +24,7 @@
 }
 
 .input_wrap >input{
+    color: #5e5454;
     line-height: 20px;
     width: 80%;
     padding: 1px 6px;

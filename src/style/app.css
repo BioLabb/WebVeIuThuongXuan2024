@@ -11,7 +11,7 @@
     color: rgb(243, 59, 59);
 }
 
-.color_yellow {
+.color_yellow_linear{
     background: linear-gradient(to right, var(--color-yellow), var(--color-yellow-1) 100%);
     background-clip: text;
     color: transparent;
