@@ -8,8 +8,14 @@ import Description from "./component/Description";
 import Button from "./component/Button";
 
 import { readVeXuanRealTime, wirteVeXuan } from "./api/veXuan";
+
 import { ref, onValue } from "firebase/database";
-import { database } from "./utils/database";
+import { collection, addDoc, setDoc, doc } from "firebase/firestore";
+import { database, store } from "./utils/database";
+import { setVeXuanWithId } from "./api/storeVeXuan";
+import Ve from "./component/Ve";
+import ListVe from "./component/ListVe";
+import ParentComponent from "./component/Pranent";
 
 
 
@@ -22,28 +28,19 @@ function App() {
   const [phone, setPhone] = useState("");
   const [facebook, setFacebook] = useState("");
   const [listVe, setListVe] = useState({});
+  const [isHiddentVe, setIsHiddentVe] = useState(false);
 
   const [validateFullName, setValidateFullName] = useState("");
   const [validateMssv, setValidateMssv] = useState("");
   const [validateEmail, setValidateEmail] = useState("")
-  const [validatePhone,setValidatePhone] = useState("");
+  const [validatePhone, setValidatePhone] = useState("");
   const [validateFacebook, setValidateFacebook] = useState("");
 
   // only run first
   useEffect(() => {
-    const db = database;
-    const starCountRef = ref(db, `vexuan/`);
-    onValue(starCountRef, (snapshot) => {
-      const data = snapshot.val();
-      setListVe(data);
-    }, (error) => {
-      console.log(error)
-    });
+
   }, []);
 
-  useEffect(() => {
-    console.log(listVe);
-  }, [listVe])
 
   // lấy giá trị từ các event
   const getValueFromEventElement = (e) => {
@@ -65,62 +62,70 @@ function App() {
     setFacebook(getValueFromEventElement(e));
   }
 
+
   //============ check vaildate ===========
   // check chuỗi rông
-  const isEmpty = (string)=>{
-    return string.trim() ? true : false;
+  const isEmpty = (string) => {
+    return string.trim() ? false : true;
   }
 
   // chứa đối tượng thông báo các lỗi validate
   const validateAlert = {
-      empty: "Trống"
+    empty: "Trống"
   }
 
   const handleValidateInput = () => {
-    let isValidate = false;
-    if(!isEmpty(fullname)){
+    let isValidate;
+    // kiểm tra input elemement có bị rỗng hay không
+    if (isEmpty(fullname) || isEmpty(mssv) || isEmpty(email)
+      || isEmpty(phone) || isEmpty(facebook)) {
+      if (isEmpty(fullname)) {
         setValidateFullName(validateAlert.empty);
-    }
-    if(!isEmpty(mssv)){
-      setValidateMssv(validateAlert.empty);
-    }
-    if(!isEmpty(email)){
-      setValidateEmail(validateAlert.empty);
-    }
-    if(!isEmpty(phone)){
-      setValidatePhone(validateAlert.empty)
-    }
-    if(!isEmpty(facebook)){
-      setValidateFacebook(validateAlert.empty)
+      }
+      if (isEmpty(mssv)) {
+        setValidateMssv(validateAlert.empty);
+      }
+      if (isEmpty(email)) {
+        setValidateEmail(validateAlert.empty);
+      }
+      if (isEmpty(phone)) {
+        setValidatePhone(validateAlert.empty)
+      }
+      if (isEmpty(facebook)) {
+        setValidateFacebook(validateAlert.empty)
+      }
+
+      return false;
     }
 
-
+    return true;
   }
 
   const onSubmit = (e) => {
-    const veXuan = {
-      name: fullname,
-      mssv: mssv,
-      email: email,
-      phone: phone,
-      facebook: facebook,
-      ve: 3
+
+    // nếu validate không đúng thì dừng
+    if (!handleValidateInput()) {
+      return;
     }
 
-    handleValidateInput();
-
-    wirteVeXuan(veXuan);
     setFullname("");
     setMssv("");
     setPhone("");
     setFacebook("");
+  };
+
+  const handleToggleVe = (e) => {
+      setIsHiddentVe(!isHiddentVe);
   }
+
 
 
   return (
     <div className="App">
       <Content>
         <Description />
+        <ListVe handleClose={handleToggleVe} show={isHiddentVe}  />
+        {/* <ParentComponent/> */}
         <InputGroup>
           <Input onChange={handleInputName} value={fullname} validate={validateFullName}
             name="Họ và tên" placeholder="Ví dụ: Nguyễn Văn A" />
@@ -128,11 +133,12 @@ function App() {
             name="Mssv " placeholder="Ví dụ: 2451010001" />
           <Input onChange={handleEmail} value={email} validate={validateEmail}
             name="Email" placeholder="Ví dụ: 2451010001A@ou.edu.vn" />
-          <Input onChange={handleInputPhone} value={phone} validate={validatePhone}
+          <Input onChange={handleInputPhone} value={phone} validate={validatePhone} maxLength={10}
             name="Số điện thoại " placeholder="Ví dụ: 0912 *** ****" />
           <Input onChange={handleInputFacebook} value={facebook} validate={validateFacebook}
             name="Link Facebok " placeholder="Ví dụ: facebook.com/ouityouth" />
-          <Button name="Xác nhận" onClick={onSubmit} />
+          <Button name="Click vào để chọn vé" onClick={handleToggleVe}></Button>
+          <Button name="Xác nhận mua" onClick={onSubmit} />
         </InputGroup>
       </Content>
     </div>

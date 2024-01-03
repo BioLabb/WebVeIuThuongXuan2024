@@ -1,0 +1,9 @@
+.button_ve{
+    width: 40px;
+    height: 40px;
+    color: #ffff;
+    font-size: larger;
+    margin: 6px;
+    border: 1px solid #ffff;
+    cursor: pointer;
+}

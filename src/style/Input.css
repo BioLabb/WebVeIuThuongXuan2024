@@ -15,12 +15,18 @@
 
 
 .input_wrap{
+    box-sizing: border-box;
     min-width:300px ;
     padding-top: 6px;
     padding-bottom: 6px;
     border: 1px solid #948e8e;
     border-radius: var(--border-radius);
     background-color: #ffff;
+}
+
+.input_wrap:focus-within{
+    border: 1px solid var(--color-yellow);
+    box-shadow: 0px 2px 6px 1px var(--color-yellow);
 }
 
 .input_wrap >input{
