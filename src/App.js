@@ -27,7 +27,7 @@ function App() {
   const [email, setEmail] = useState("")
   const [phone, setPhone] = useState("");
   const [facebook, setFacebook] = useState("");
-  const [listVe, setListVe] = useState({});
+  const [listVe, setListVe] = useState(new Set());
   const [isHiddentVe, setIsHiddentVe] = useState(false);
 
   const [validateFullName, setValidateFullName] = useState("");
@@ -36,6 +36,7 @@ function App() {
   const [validatePhone, setValidatePhone] = useState("");
   const [validateFacebook, setValidateFacebook] = useState("");
 
+  let ves;
   // only run first
   useEffect(() => {
 
@@ -71,9 +72,11 @@ function App() {
 
   // chứa đối tượng thông báo các lỗi validate
   const validateAlert = {
-    empty: "Trống"
+    empty: "Không được bỏ trống"
   }
 
+  // xử lý validate của các input
+  // return boolean
   const handleValidateInput = () => {
     let isValidate;
     // kiểm tra input elemement có bị rỗng hay không
@@ -101,12 +104,33 @@ function App() {
     return true;
   }
 
-  const onSubmit = (e) => {
 
+  // khi người dùng nhấn nút mua vé
+  const onSubmit = (e) => {
     // nếu validate không đúng thì dừng
-    if (!handleValidateInput()) {
-      return;
+    // if (!handleValidateInput()) {
+    //   return;
+    // }
+
+    const infoUser = {
+      fullname: "tien",
+      mssv: "mssv",
+      email: "email",
+      phone: "phone",
+      facebook: "facebooke"
     }
+
+    // đưa thông tin vé lên database
+    listVe.forEach((numVe)=>{
+
+     if( setVeXuanWithId(numVe,infoUser)){
+      console.log("Đăng ký vé thành công")
+     }else{
+      console.log("vé bị trùng");
+     }
+    })
+
+    
 
     setFullname("");
     setMssv("");
@@ -115,16 +139,24 @@ function App() {
   };
 
   const handleToggleVe = (e) => {
-      setIsHiddentVe(!isHiddentVe);
+    setIsHiddentVe(!isHiddentVe);
+    setListVe(ves);
   }
 
+  useEffect(() => {
+    // console.log(listVe)
+  }, [listVe])
 
+  const handleListVe = (arrVe) => {
+    ves = arrVe
+
+  }
 
   return (
     <div className="App">
       <Content>
         <Description />
-        <ListVe handleClose={handleToggleVe} show={isHiddentVe}  />
+        <ListVe handleClose={handleToggleVe} show={isHiddentVe} arrVe={handleListVe} />
         {/* <ParentComponent/> */}
         <InputGroup>
           <Input onChange={handleInputName} value={fullname} validate={validateFullName}

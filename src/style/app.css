@@ -13,6 +13,9 @@
 .color_black{
     color:black;
 }
+.color_white{
+    color: #ffff;
+}
 
 .color_yellow_linear{
     background: linear-gradient(to right, var(--color-yellow), var(--color-yellow-1) 100%);
