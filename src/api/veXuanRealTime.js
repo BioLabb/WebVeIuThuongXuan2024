@@ -10,7 +10,7 @@ export async function readVeXuanRealTime(id = "") {
     return readAllRealTime(urlVe, id);
 }
 
-export function wirteVeXuan(objVeXuan) {
+export function updateVeXuan(objVeXuan) {
     const db = database;
     // set(ref(db, `${urlVe}/${objVeXuan.ve}`), {
     //     name: objVeXuan.name,
@@ -27,4 +27,11 @@ export function wirteVeXuan(objVeXuan) {
   updates['vexuan/4'] = objVeXuan;
 
   return update(ref(db), updates);
+}
+
+export function writeVeXuan(numVe) {
+  const db = database;
+  set(ref(db, urlVe + "/" + numVe), {
+    id:numVe
+  });
 }

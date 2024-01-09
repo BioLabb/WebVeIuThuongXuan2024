@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Ve from "./Ve";
 import { v4 as uuidv4 } from "uuid";
 import "../style/listve.css";
+import Button from "./Button";
 
 export default function ListVe({ handleClose, show, arrVe }) {
   const [listVe, setListVe] = useState([]);
@@ -14,6 +15,10 @@ export default function ListVe({ handleClose, show, arrVe }) {
   useEffect(() => {
     setListVe(Array.from(new Array(300)));
   }, []);
+
+  useEffect(()=>{
+    listVePicked.clear();
+  })
 
   // xử lý vé được chọn ở component ve
   const handlePickVe = async (numVe) => {
@@ -28,15 +33,15 @@ export default function ListVe({ handleClose, show, arrVe }) {
       listVePicked.add(numVe);
       await setListVePicked(listVePicked);
     }
-    console.log(listVePicked)
-    arrVe(listVePicked);
+    // listVePicked đang là set chuyển sang arr để có thể sử dụng map()
+    arrVe(Array.from(listVePicked));
   };
 
   return (
     <div className={showHideClassName + " list_ve_container border_radius"}>
-      <button
+      <button 
         onClick={handleClose}
-        className="color_black border_radius background-yellow-linear"
+        className="button_close color_black border_radius background-yellow-linear"
       >
         Đóng
       </button>
@@ -59,6 +64,9 @@ export default function ListVe({ handleClose, show, arrVe }) {
           return <Ve handlePick={handlePickVe} key={uuidv4()} value={num} />;
         })}
       </div>
+      <Button styles={{width:"95%", margin:"auto"}}
+      name="Xác nhận"
+      onClick={handleClose}/>
     </div>
   );
 }
