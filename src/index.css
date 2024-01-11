@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Vollkorn:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;1,300;1,400;1,500&display=swap');
 /* twaindcss */
 @tailwind base;
 @tailwind components;
@@ -15,7 +15,7 @@ body {
 }
 
 code {
-  font-family: 'Vollkorn', source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: Roboto, 'Vollkorn', source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
 

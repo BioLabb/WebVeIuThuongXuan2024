@@ -9,26 +9,25 @@
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
-    background-color: rgba(229, 225, 225);
-
+    background-image: url("../../public/backgroundRed.png");
 }
 
 .list_ve_container .button_close {
-    position: absolute;
-    color: white;
-    right: 0;
     margin-right: 6px;
     margin-top: 6px;
-    width: 40px;
-    height: 30px;
+    position: absolute;
+    font-size:medium;
+    color: white;
+    right: 0;
     border: none;
     cursor: pointer;
 }
 
 
 .list_ve_container .list_ve {
-    padding: 3px 10px;
     box-shadow: -1px 1px 5px 6px rgba(0, 0, 0, 0.3);
+    background-size: contain;
+    background-image: url("../../public/background.png");
     display: flex;
     flex-wrap: wrap;
     justify-content: center;

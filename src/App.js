@@ -8,13 +8,14 @@ import Description from "./component/Description";
 import "./style/app.css";
 
 
-import { setVeXuanWithId } from "./api/storeVeXuan";
+import { isVeExist, setVeXuanWithId } from "./api/storeVeXuan";
 import ListVe from "./component/ListVe";
 
 import { v4 as uuidv4 } from "uuid";
 import ImageUpload from "./component/ImageUpload";
 import { uploadImg } from "./api/image";
 import { writeVeXuan } from "./api/veXuanRealTime";
+import { Alert, AlertTitle, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 
 
 function App() {
@@ -28,6 +29,10 @@ function App() {
   const [listVe, setListVe] = useState([]);
   const [isHiddentVe, setIsHiddentVe] = useState(false);
 
+  const [isAlret, setIsAlert] = useState(false);
+  const [alertState, setAlertState] = useState("")
+  const [isLoading, setIsloading] = useState(false);
+
   const [img, setImg] = useState(null);
   const [imgDownloadUrl, setImgDownLoadUrl] = useState("");
 
@@ -38,6 +43,7 @@ function App() {
   const [validateFacebook, setValidateFacebook] = useState("");
 
   let ves;
+  let alertString = "";
   // only run first
   useEffect(() => {
 
@@ -84,7 +90,10 @@ function App() {
   const validateAlert = {
     empty: "Không được bỏ trống",
     notEmail: "Email không hợp lệ",
-    notPhone: "Số điện thoại không hợp lệ"
+    notPhone: "Số điện thoại không hợp lệ",
+    buyFailse: "Vé bạn chọn đã có người mua",
+    buying: "Vé bạn chọn đã có người mua",
+    buySucces: "Mua vé thành công"
   }
 
   // xử lý validate của các input
@@ -142,7 +151,7 @@ function App() {
   }
 
   const handleValidateVe = () => {
-    if (!listVe || listVe.length == 0) {
+    if (!listVe || listVe.length === 0) {
       alert("Chưa chọn vé")
       return false;
     }
@@ -164,37 +173,67 @@ function App() {
       return;
     }
 
-    console.log(img)
-    uploadImg(img)
+    setIsloading(true);
+    uploadImg(img, fullname)
       .then(url => {
         setImgDownLoadUrl(url);
+        return url;
+      }).
+      then((url) => {
+        const infoUser = {
+          date: new Date(),
+          fullname: fullname,
+          mssv: mssv,
+          email: email,
+          phone: phone,
+          facebook: facebook,
+          img: url
+        }
+        return infoUser
+      })
+      .then((infoUser) => {
+        // bật thông báo khi đang up data 
+        // đưa thông tin vé lên database
+        listVe.forEach((numVe) => {
+          // nếu đưa vé lên db thành công 
+          // thì tiến hành tiếp đưa đưa lên db realtime
+          isVeExist(numVe)
+            .then(isExist => {
+              setIsloading(false);
+              if (!isExist) {
+                setVeXuanWithId(numVe, infoUser)
+                  .then(isSuccess => {
+                    if (isSuccess) {
+                      writeVeXuan(numVe);
+                    }
+                    else {
+                      setAlertState(validateAlert.buyFailse);
+                      alertString = validateAlert.buyFailse
+                    }
+                  })
+              } else {
+                setAlertState(validateAlert.buying);
+                alertString = validateAlert.buying;
+              }
+            });
+
+        })
+        if (alertState) {
+          setAlertState(validateAlert.buySucces);
+        }
+        setIsAlert(true);
+
+      })
+      .catch((err) => {
+        console.log(err)
       })
 
-    const infoUser = {
-      date: new Date(),
-      fullname: fullname,
-      mssv: mssv,
-      email: email,
-      phone: phone,
-      facebook: facebook,
-      img: imgDownloadUrl
-    }
 
-    // đưa thông tin vé lên database
-    listVe.forEach((numVe) => {
-      if (setVeXuanWithId(numVe, infoUser)) {
-        writeVeXuan(numVe);
-        console.log("Đăng ký vé thành công")
-      } else {
-        console.log("vé bị trùng");
-      }
-    })
-
-    setFullname("");
-    setMssv("");
-    setPhone("");
-    setFacebook("");
-    setEmail("");
+    // setFullname("");
+    // setMssv("");
+    // setPhone("");
+    // setFacebook("");
+    // setEmail("");
   };
 
   const handleToggleVe = (e) => {
@@ -212,22 +251,48 @@ function App() {
     setImg(image);
   }
 
+  const handleClosePoup = () => {
+    setIsAlert(false);
+  }
   return (
-    <div className="App">
+    <div className="App background-red">
       <Content>
+        <Dialog
+          open={isAlret}
+          keepMounted
+          aria-describedby="alert-dialog-slide-description"
+        >
+          <DialogTitle>
+            <p className="color_yellow_linear">Thông báo</p>
+          </DialogTitle>
+          <DialogContent>
+            <p className="color_yellow_linear text-lg font-medium">{alertState}</p>
+          </DialogContent>
+          <Button
+            classNameStyles="text-white mx-1 mb-1"
+            onClick={handleClosePoup}
+            name="Đóng" />
+        </Dialog>
+        <Dialog
+          open={isLoading}
+          keepMounted
+          aria-describedby="alert-dialog-slide-description"
+        >
+          <CircularProgress  style={{color:"green",background:"none"}} />
+        </Dialog>
         <Description />
         <ListVe handleClose={handleToggleVe} show={isHiddentVe} arrVe={handleListVe} />
         {/* <ParentComponent/> */}
         <InputGroup>
-          <Input onChange={handleInputName} value={fullname} validate={validateFullName}
+          <Input onChange={handleInputName} value={fullname} validate={validateFullName} maxLength={50}
             name="Họ và tên" placeholder="Ví dụ: Nguyễn Văn A" />
-          <Input onChange={handleInputMssv} value={mssv} validate={validateMssv}
+          <Input onChange={handleInputMssv} value={mssv} validate={validateMssv} maxLength={50}
             name="Mssv " placeholder="Ví dụ: 2451010001" />
-          <Input onChange={handleEmail} value={email} validate={validateEmail}
+          <Input onChange={handleEmail} value={email} validate={validateEmail} maxLength={50}
             name="Email" placeholder="Ví dụ: 2451010001A@ou.edu.vn" />
           <Input onChange={handleInputPhone} value={phone} validate={validatePhone} maxLength={10}
             name="Số điện thoại " placeholder="Ví dụ: 0912 *** ****" />
-          <Input onChange={handleInputFacebook} value={facebook} validate={validateFacebook}
+          <Input onChange={handleInputFacebook} value={facebook} validate={validateFacebook} maxLength={50}
             name="Link Facebok " placeholder="Ví dụ: facebook.com/ouityouth" />
           <div className="flex">
             <Button styles={{ padding: "5px", width: "85px", margin: "0" }} name="Chọn vé" onClick={handleToggleVe}></Button>

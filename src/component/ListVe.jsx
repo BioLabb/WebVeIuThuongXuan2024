@@ -3,22 +3,36 @@ import Ve from "./Ve";
 import { v4 as uuidv4 } from "uuid";
 import "../style/listve.css";
 import Button from "./Button";
+import { database } from "../utils/database";
+import { onValue, ref } from "firebase/database";
 
 export default function ListVe({ handleClose, show, arrVe }) {
   const [listVe, setListVe] = useState([]);
-
   const [listVePicked, setListVePicked] = useState(new Set());
-
+  const [veBuys,setVeBuys] = useState({});
   const showHideClassName = show ? "block" : "block_none";
 
   // only run first
   useEffect(() => {
     setListVe(Array.from(new Array(300)));
+    // cập nhật data thời gian thực
+    fecthDataRealtiem();
   }, []);
 
-  useEffect(()=>{
+  useEffect(() => {
     listVePicked.clear();
-  })
+  });
+
+
+  const fecthDataRealtiem = ()=>{
+    const db = database;
+    const dbRef = ref(db, "vexuan");
+    onValue(dbRef, (snapshot) => {
+      const data = snapshot.val();
+      setVeBuys(data);
+    });
+  }
+
 
   // xử lý vé được chọn ở component ve
   const handlePickVe = async (numVe) => {
@@ -37,36 +51,44 @@ export default function ListVe({ handleClose, show, arrVe }) {
     arrVe(Array.from(listVePicked));
   };
 
+  // kiểm tra vé có tồn tại trong veBuys hay không
+  // veBuys: danh danh sách vé get từ data
+  const isExitsVe = (num) => {
+    return veBuys[num] ? true: false;
+  }
+
   return (
     <div className={showHideClassName + " list_ve_container border_radius"}>
-      <button 
+      <button
         onClick={handleClose}
-        className="button_close color_black border_radius background-yellow-linear"
+        className="button_close color_black border_radius background-yellow-linear p-2"
       >
         Đóng
       </button>
       <div className="list_ve_color">
         <div>
-          <span className="block_red border_radius"></span>
-          <p className="color_black block_inline">Vé đã được mua</p>
+          <span className=" block_red border_radius"></span>
+          <p className="text-white block_inline">Vé đã được mua</p>
         </div>
         <div>
-          <span className="block_white border_radius"></span>
-          <p className="color_black block_inline">Vé chưa được mua</p>
+          <span className="white block_white border_radius"></span>
+          <p className="text-white block_inline">Vé chưa được mua</p>
         </div>
         <div>
           <span className="block_yellow_linear border_radius"></span>
-          <p className="color_black block_inline">Vé đã chọn</p>
+          <p className="text-white block_inline">Vé đã chọn</p>
         </div>
       </div>
-      <div className="list_ve">
+      <div className="list_ve m-2">
         {listVe.map((ve, num) => {
-          return <Ve handlePick={handlePickVe} key={uuidv4()} value={num} />;
+          return <Ve isBuy={isExitsVe(num)} handlePick={handlePickVe} key={uuidv4()} value={num} />;
         })}
       </div>
-      <Button styles={{width:"95%", margin:"auto"}}
-      name="Xác nhận"
-      onClick={handleClose}/>
+      <Button
+        styles={{ width: "95%", margin: "auto" }}
+        name="Xác nhận"
+        onClick={handleClose}
+      />
     </div>
   );
 }

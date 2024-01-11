@@ -1,11 +1,11 @@
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { storage } from "../utils/database";
 
-export const uploadImg = async (image) => {
+export const uploadImg = async (image,nameUser) => {
     const metadata = {
         contentType: "image/jpeg",
     };
-    const storageRef = ref(storage, `images/${image.name}`); // tạo 1 địa chỉ để chứa ảnh chuẩn bị tải lên store
+    const storageRef = ref(storage, `images/${nameUser}/${image.name}`); // tạo 1 địa chỉ để chứa ảnh chuẩn bị tải lên store
     try {
         const uploadTask = await uploadBytesResumable(storageRef, image, metadata); // hàm tải ảnh lên store
         const downloadUrl = await getDownloadURL(uploadTask.ref);
